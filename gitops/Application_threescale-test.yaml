@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: threescale-test
+spec:
+  destination:
+    namespace: threescale-testing
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: 3scale/library-books-api/overlays/test
+    repoURL: https://github.com/jeanNyil/3scale-gitops.git
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+    - ApplyOutOfSyncOnly=true

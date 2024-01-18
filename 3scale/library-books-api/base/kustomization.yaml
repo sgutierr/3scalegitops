@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+    name: 3scale
+resources:
+- backends/books-api-v1.yaml
+- backends/books-api-v2.yaml
+- products/library-books-api.yaml
+- activedocs/library-books-api.yaml
+- proxyconfigs/library-books-api.yaml

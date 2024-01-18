@@ -1,0 +1,15 @@
+apiVersion: capabilities.3scale.net/v1alpha1
+kind: Tenant
+metadata:
+  name: threescale-development-tenant
+spec:
+  email: dev@example.openshift.com
+  masterCredentialsRef:
+    name: system-seed
+  organizationName: development
+  passwordCredentialsRef:
+    name: tenant-admin-secret
+  systemMasterUrl: 'https://master.apps.ocp4.quitala.eu'
+  tenantSecretRef:
+    name: tenant-secret
+  username: admin

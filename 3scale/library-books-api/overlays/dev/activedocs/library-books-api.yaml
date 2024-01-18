@@ -1,0 +1,9 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: ActiveDoc
+metadata:
+  name: library-books-api
+spec:
+  activeDocOpenAPIRef:
+    url: >-
+      https://raw.githubusercontent.com/jeanNyil/3scale-gitops/main/3scale/library-books-api/overlays/dev/openapis/library-books-api.yaml
+  name: Library Books API (v2)

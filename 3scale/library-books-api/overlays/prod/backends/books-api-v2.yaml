@@ -1,0 +1,8 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Backend
+metadata:
+  name: books-api-v2-backend
+spec:
+  name: books-api-v2 Backend
+  systemName: books-api-v2-backend
+  privateBaseURL: http://books-api-v2.library-apis.svc.cluster.local:80/api/v2

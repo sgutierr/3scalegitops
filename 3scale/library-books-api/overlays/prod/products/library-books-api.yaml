@@ -1,0 +1,25 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Product
+metadata:
+  name: library-books-api
+spec:
+  name: Library Books API
+  systemName: library-books-api
+  deployment:
+    apicastHosted:
+      authentication:
+        oidc:
+          issuerType: keycloak
+          issuerEndpoint: https://threescale-zync:x0KexlVRbx02gjOil3zQgfeDV5L6Sa0Y@sso.apps.cluster-8bcs7.8bcs7.sandbox2056.opentlc.com/auth/realms/demo-prod
+  applicationPlans:
+    v2-basic:
+      name: v2-basic
+      limits:
+      - period: eternity
+        value: 0
+        metricMethodRef:
+          systemName: get-books-v1
+      - period: minute
+        value: 50
+        metricMethodRef:
+          systemName: get-books-v2

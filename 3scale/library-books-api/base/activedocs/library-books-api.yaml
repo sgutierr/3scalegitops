@@ -1,0 +1,16 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: ActiveDoc
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  name: library-books-api
+spec:
+  providerAccountRef:
+    name: tenant-secret
+  activeDocOpenAPIRef:
+    url: >-
+      https://raw.githubusercontent.com/jeanNyil/3scale-gitops/main/3scale/library-books-api/overlays/prod/openapis/library-books-api.yaml
+  name: Library Books API (v2)
+  productSystemName: library-books-api
+  published: true
+  systemName: librarybooksapi

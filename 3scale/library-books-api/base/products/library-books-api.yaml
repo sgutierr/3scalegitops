@@ -1,0 +1,211 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Product
+metadata:
+  name: library-books-api
+spec:
+  name: Library Books API
+  systemName: library-books-api
+  description: Manages a library books inventory
+  providerAccountRef:
+    name: tenant-secret
+  deployment:
+    apicastHosted:
+      authentication:
+        oidc:
+          issuerType: keycloak
+          issuerEndpoint: https://threescale-zync:<change_client_secret>@<change_sso_hostname>/auth/realms/demo-prod
+          jwtClaimWithClientID: azp
+          jwtClaimWithClientIDType: plain
+          authenticationFlow:
+            standardFlowEnabled: false
+            implicitFlowEnabled: false
+            serviceAccountsEnabled: true
+            directAccessGrantsEnabled: false
+          credentials: headers
+  mappingRules:
+    - httpMethod: GET
+      pattern: "/v1/books$"
+      metricMethodRef: get-books-v1
+      increment: 1
+      last: false
+    - httpMethod: GET
+      pattern: "/v2/books$"
+      metricMethodRef: get-books-v2
+      increment: 1
+      last: false
+  methods:
+    get-books-v1:
+      friendlyName: getBooks-v1
+      description: 'List All Books-v1'
+    get-books-v2:
+      friendlyName: getBooks-v2
+      description: 'List All Books-v2'
+  metrics:
+    hits:
+      friendlyName: Hits
+      unit: hit
+      description: Number of API hits
+    status-200:
+      friendlyName: status-200
+      unit: count
+      description: Number of 200 HTTP return codes from the upstream backend
+    status-404:
+      friendlyName: status-404
+      unit: count
+      description: Number of 404 HTTP return codes from the upstream backend
+    status-500:
+      friendlyName: status-500
+      unit: count
+      description: Number of 500 HTTP return codes from the upstream backend
+  policies:
+    - name: cors
+      version: builtin
+      configuration:
+        allow_credentials: true
+        allow_headers:
+        - Authorization
+        allow_methods:
+        - GET
+        - OPTIONS
+        allow_origin: "*"
+      enabled: true
+    - name: caching
+      version: builtin
+      configuration:
+        caching_type: resilient
+      enabled: true
+    - name: 3scale_batcher
+      version: builtin
+      configuration:
+        batch_report_seconds: 10
+        auths_ttl: 30
+      enabled: true
+    - name: logging
+      version: builtin
+      configuration:
+        condition:
+          combine_op: and
+        enable_access_logs: true
+        custom_logging: '[{{time_local}}] [source ip: "{{headers[''x-forwarded-for'']}}"] [local: {{host}}:{{server_port}}] [remote: {{remote_addr}}:{{remote_port}}] [client Id: "{{jwt.clientId}}"] [request: "{{request}}" to service [service id: {{service.id}}, service name: {{service.system_name}}] - status: {{status}} - body bytes sent: {{body_bytes_sent}} - request time: {{request_time}} - post action impact: {{post_action_impact}}]'
+      enabled: true
+    - name: custom_metrics
+      version: builtin
+      configuration:
+        rules:
+        - increment: '1'
+          metric: status-{{status}}
+          condition:
+            operations:
+            - left_type: liquid
+              right_type: plain
+              op: "=="
+              right: '200'
+              left: "{{status}}"
+            - left_type: liquid
+              right_type: plain
+              op: "=="
+              right: '404'
+              left: "{{status}}"
+            - left_type: liquid
+              right_type: plain
+              op: "=="
+              right: '500'
+              left: "{{status}}"
+            combine_op: or
+      enabled: true
+    - name: apicast
+      version: builtin
+      configuration: {}
+      enabled: true
+  applicationPlans:
+    v1-basic:
+      name: v1-basic
+      appsRequireApproval: true
+      trialPeriod: 0
+      setupFee: '0.00'
+      costMonth: '0.00'
+      published: false
+      limits:
+      - period: minute
+        value: 5
+        metricMethodRef:
+          systemName: get-books-v1
+      - period: eternity
+        value: 0
+        metricMethodRef:
+          systemName: get-books-v2
+    v1-premium:
+      name: v1-premium
+      appsRequireApproval: true
+      trialPeriod: 0
+      setupFee: '15.00'
+      costMonth: '5.00'
+      published: false
+      pricingRules:
+      - from: 1
+        to: 200
+        pricePerUnit: '0.05'
+        metricMethodRef:
+          systemName: get-books-v1
+      - from: 201
+        to: 10000
+        pricePerUnit: '0.01'
+        metricMethodRef:
+          systemName: get-books-v1
+      limits:
+      - period: minute
+        value: 1200
+        metricMethodRef:
+          systemName: get-books-v1
+      - period: eternity
+        value: 0
+        metricMethodRef:
+          systemName: get-books-v2
+    v2-basic:
+      name: v2-basic
+      appsRequireApproval: true
+      trialPeriod: 0
+      setupFee: '0.00'
+      costMonth: '0.00'
+      published: true
+      limits:
+      - period: eternity
+        value: 0
+        metricMethodRef:
+          systemName: get-books-v1
+      - period: minute
+        value: 50
+        metricMethodRef:
+          systemName: get-books-v2
+    v2-premium:
+      name: v2-premium
+      appsRequireApproval: true
+      trialPeriod: 0
+      setupFee: '15.00'
+      costMonth: '5.00'
+      published: true
+      pricingRules:
+      - from: 1
+        to: 200
+        pricePerUnit: '0.05'
+        metricMethodRef:
+          systemName: get-books-v2
+      - from: 201
+        to: 10000
+        pricePerUnit: '0.01'
+        metricMethodRef:
+          systemName: get-books-v2
+      limits:
+      - period: eternity
+        value: 0
+        metricMethodRef:
+          systemName: get-books-v1
+      - period: minute
+        value: 1200
+        metricMethodRef:
+          systemName: get-books-v2
+  backendUsages:
+    books-api-v1-backend:
+      path: "/v1"
+    books-api-v2-backend:
+      path: "/v2"
