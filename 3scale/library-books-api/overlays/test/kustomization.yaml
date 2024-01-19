@@ -4,7 +4,7 @@ metadata:
   name: 3scale
 resources:
 - ../../base
-patchesStrategicMerge:
+patches:
 - backends/books-api-v1.yaml
 - backends/books-api-v2.yaml
 - products/library-books-api.yaml
