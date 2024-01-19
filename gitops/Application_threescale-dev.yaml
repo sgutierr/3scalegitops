@@ -4,12 +4,11 @@ metadata:
   name: threescale-dev
 spec:
   destination:
-    namespace: threescale-development
     server: https://kubernetes.default.svc
   project: default
   source:
     path: 3scale/library-books-api/overlays/dev
-    repoURL: https://github.com/jeanNyil/3scale-gitops.git
+    repoURL: https://github.com/sgutierr/3scalegitops.git
     targetRevision: HEAD
   syncPolicy:
     syncOptions:

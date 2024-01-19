@@ -5,7 +5,7 @@ metadata:
 spec:
   name: books-api-v2 Backend
   systemName: books-api-v2-backend
-  privateBaseURL: http://books-api-v2.library-apis.svc.cluster.local:80/api/v2
+  privateBaseURL: https://echo-api.3scale.net
   description: 'Manages a library books inventory (v2)'
   providerAccountRef:
     name: tenant-secret
