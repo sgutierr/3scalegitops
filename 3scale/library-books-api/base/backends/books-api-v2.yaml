@@ -1,8 +1,7 @@
 apiVersion: capabilities.3scale.net/v1beta1
 kind: Backend
 metadata:
-  name: books-api-v2-backend
-  namespace: appdev-apimanager  
+  name: books-api-v2-backend  
 spec:
   name: books-api-v2 Backend
   systemName: books-api-v2-backend
