@@ -4,6 +4,7 @@ metadata:
   name: threescale-dev
 spec:
   destination:
+    namespace: appdev-apimanager
     server: https://kubernetes.default.svc
   project: default
   source:
